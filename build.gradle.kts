@@ -3,7 +3,7 @@ val taboolibVersion: String by project
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.7.20"
-    id("io.izzel.taboolib") version "1.56"
+    id("io.izzel.taboolib") version "1.60"
 }
 
 taboolib {
@@ -35,7 +35,7 @@ taboolib {
 
     relocate("com.zaxxer.hikari", "com.zaxxer.hikari_4_0_3_rw")
     classifier = null
-    version = "6.0.12-40"
+    version = "6.0.12-69"
 }
 
 repositories {
@@ -65,7 +65,7 @@ dependencies {
 
     // Hook Plugins
     compileOnly("me.clip:placeholderapi:2.10.9") { isTransitive = false }
-    compileOnly("com.github.MilkBowl:VaultAPI:-SNAPSHOT") { isTransitive = false }
+    //compileOnly("com.github.MilkBowl:VaultAPI:-SNAPSHOT") { isTransitive = false }
     compileOnly("org.black_ixx:playerpoints:3.1.1") { isTransitive = false }
 }
 

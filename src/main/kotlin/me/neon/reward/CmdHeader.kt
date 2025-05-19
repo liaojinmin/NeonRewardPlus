@@ -32,7 +32,7 @@ object CmdHeader {
     @CommandBody(permission = "NeonRewardPlus.Command.reload")
     val reload = subCommand {
         execute<CommandSender> { sender, _, _ ->
-            sender.sendMessage("[GeekRewardPlus] 已重新加载配置...")
+            sender.sendMessage("[NeonRewardPlus] 已重新加载配置...")
             RewardManager.load()
             Menu.reload()
         }
@@ -43,18 +43,18 @@ object CmdHeader {
         // pms reset player type key ???
         dynamic("玩家名称") {
             suggest { DataManager.getAllData().map { it.name } }
-            execute<CommandSender> { _, context, _ ->
+            execute<CommandSender> { sender, context, _ ->
                 Bukkit.getPlayer(context["玩家名称"])?.let {
                     it.getBasicData()?.let { data ->
                         data.reset()
                         data.updateByTask()
-                    }
+                    } ?: sender.sendLang("data-load")
                 }
             }
 
             dynamic("种类") {
                 suggest { listOf("points", "money", "time") }
-                execute<CommandSender> { _, context, _ ->
+                execute<CommandSender> { sender, context, _ ->
                     Bukkit.getPlayer(context["玩家名称"])?.let {
                         it.getBasicData()?.let { data ->
                             when (context["种类"]) {
@@ -63,12 +63,12 @@ object CmdHeader {
                                 "time" -> data.timeKey.clear()
                             }
                             data.updateByTask()
-                        }
+                        } ?: sender.sendLang("data-load")
                     }
                 }
 
                 dynamic("key") {
-                    execute<CommandSender> { _, context, _ ->
+                    execute<CommandSender> { sender, context, _ ->
                         Bukkit.getPlayer(context["玩家名称"])?.let {
                             val key = context["key"]
                             it.getBasicData()?.let { data ->
@@ -78,7 +78,7 @@ object CmdHeader {
                                     "time" -> data.timeKey.removeIf { k -> k == key }
                                 }
                                 data.updateByTask()
-                            }
+                            } ?: sender.sendLang("data-load")
                         }
                     }
                 }
@@ -105,7 +105,11 @@ object CmdHeader {
                         execute<CommandSender> { sender, context, _ ->
 
                             Bukkit.getPlayer(context["玩家名称"])?.let {
-                                val data = it.getBasicData() ?: error("")
+                                val data = it.getBasicData()
+                                if (data == null) {
+                                    sender.sendLang("data-load")
+                                    return@execute
+                                }
                                 val action = context["操作类型"]
                                 val value = context["值"]
                                 when (context["对象类型"]) {

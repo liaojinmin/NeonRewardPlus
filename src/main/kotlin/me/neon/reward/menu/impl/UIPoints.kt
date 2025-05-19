@@ -111,7 +111,7 @@ fun Player.openPointsUI(data: PlayerData, menuData: MenuData = Menu.pointsMenuDa
                         hideAll()
                     }) {
                         if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
-                        if (hasPreviousPage()) {
+                        if (hasNextPage()) {
                             page(page+1)
                             openInventory(build())
                         }

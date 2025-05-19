@@ -33,9 +33,9 @@ object NeonRewardPlus : Plugin() {
 
     val instance by lazy { BukkitPlugin.getInstance() }
 
-    private val url = URL("https://raw.githubusercontent.com/liaojinmin/GeekRewardPlus/GeekRewardPlus-V2/version.txt")
+    private val url = URL("https://raw.githubusercontent.com/liaojinmin/NeonRewardPlus/master/version.txt")
 
-    const val version = "2.3.1"
+    const val version = "2.3.2"
 
     override fun onLoad() {
         Metrics(16328, version, Platform.BUKKIT)

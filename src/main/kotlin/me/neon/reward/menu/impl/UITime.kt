@@ -107,7 +107,7 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
                         hideAll()
                     }) {
                         if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
-                        if (hasPreviousPage()) {
+                        if (hasNextPage()) {
                             page(page+1)
                             openInventory(build())
                         }
@@ -121,7 +121,9 @@ fun Player.openTimeUI(data: PlayerData, menuData: MenuData = Menu.timeMenuData) 
                         lore.addAll(icon.lore.replacePlaceholder(this@openTimeUI))
                         customModelData = icon.model
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
+                        if (icon.action.isNotEmpty()) {
+                            KetherAPI.eval(this.clicker, icon.action.replacePlaceholder(this.clicker))
+                        }
                     }
                 }
             }

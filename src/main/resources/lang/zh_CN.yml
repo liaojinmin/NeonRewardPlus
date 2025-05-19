@@ -3,3 +3,20 @@ Loaded-Config: '&8[&6NeonReward&ePlus&8] &7加载配置文件... &8(&7耗时 &f{
 Open-Menu-Err: '&8[&6NeonReward&ePlus&8] &c不存在 &f{0} &c菜单，请检查语法'
 time-reset: '&8[&6NeonReward&ePlus&8] &a你的累计在线奖励已重置'
 Data-Add-value: '&8[&6NeonReward&ePlus&8] &7为玩家 &f{0} &f{1} &f{2} &f{3}'
+data-load: '&8[&6NeonReward&ePlus&8] &7请等待数据获取中...'
+累计在线达标:
+  - type: sound
+    sound: 'BLOCK_NOTE_BLOCK_HARP'
+    volume: 1
+    pitch: 1
+  - type: JSON
+    text:
+      - '&l'
+      - '&B    你用新的在线奖励'
+      - '&7    在线 {0} 的 {1} 奖励'
+      - '&7'
+      - '&l             §8[§a点击查看§8]'
+      - ' '
+    args:
+      - hover: '点击查看'
+        command: '/rw open time'

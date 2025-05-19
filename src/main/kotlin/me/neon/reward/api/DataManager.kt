@@ -33,19 +33,9 @@ object DataManager {
     private const val bal: String = "player_rw_data"
 
     /**
-     * 数据变动任务
-     */
-    private var dataRefreshTask: PlatformExecutor.PlatformTask? = null
-
-    /**
      * 排行榜变动任务
      */
     private var boardRefreshTask: PlatformExecutor.PlatformTask? = null
-
-    /**
-     * 带处理的任务
-     */
-    private val refreshCache: CopyOnWriteArrayList<Any> = CopyOnWriteArrayList();
 
     /**
      * 玩家数据缓存
@@ -57,7 +47,7 @@ object DataManager {
      * 玩家数据
      * 名称 映射
      */
-    private val dataCache2: MutableMap<String, PlayerData> = ConcurrentHashMap()
+    private val dataCache2: MutableMap<String, UUID> = ConcurrentHashMap()
 
     /**
      * 排行榜缓存
@@ -74,43 +64,27 @@ object DataManager {
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
         // 在数据库线程查询数据
-        submit(delay = 60) {
-            refreshCache.add(e.player)
+        submitAsync(delay = 60) {
+            val data = sqlImpl.select(e.player.uniqueId, e.player.name)
+            dataCache[data.uuid] = data
+            dataCache2[data.name] = data.uuid
         }
     }
 
     @SubscribeEvent
     fun onQuit(e: PlayerQuitEvent) {
-        e.player.getBasicData()?.let {
-            refreshCache.add(it)
+        val data = dataCache2.remove(e.player.name)?.let {
+            dataCache.remove(it)
+        } ?: dataCache.remove(e.player.uniqueId)
+        if (data != null) {
+            submitAsync {
+                sqlImpl.update(data)
+            }
         }
     }
 
     fun start() {
         sqlImpl.start()
-        dataRefreshTask?.cancel()
-        dataRefreshTask = submitAsync(delay = 20, period = 1) {
-            try {
-                if (refreshCache.isNotEmpty()) {
-                    when (val task = refreshCache.removeAt(0)) {
-                        is PlayerData -> {
-                            sqlImpl.update(task)
-                            NeonRewardPlus.debug("task is PlayerData ")
-                        }
-                        is Player -> {
-                            val data = sqlImpl.select(task.uniqueId, task.name)
-                            dataCache[data.uuid] = data
-                            dataCache2[data.name] = data
-                            NeonRewardPlus.debug("player time ${data.time.millis} ")
-                            NeonRewardPlus.debug("task is Player ")
-                        }
-                        else -> {NeonRewardPlus.debug("task is 未知")}
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
         boardRefreshTask?.cancel()
         boardRefreshTask = submitAsync(delay = 40, period = SetTings.setConfig.boardTime * 20L) {
             val data = sqlImpl.select()
@@ -139,25 +113,23 @@ object DataManager {
     }
 
     fun getBasicData(name: String): PlayerData? {
-        return dataCache2[name]
+        return dataCache2[name]?.let {
+            dataCache[it]
+        }
     }
 
 
     fun PlayerData.updateByTask() {
-        refreshCache.add(this)
-    }
-
-    fun Player.wantBasicData() {
-        if (dataCache.containsKey(this.uniqueId)) return
         submitAsync {
-            val data = sqlImpl.select(uniqueId, name)
-            dataCache[uniqueId] = data
-            dataCache2[name] = data
+            sqlImpl.update(this@updateByTask)
         }
     }
 
+
     fun Player.getBasicData(): PlayerData? {
-        return dataCache[uniqueId] ?: dataCache2[name]
+        return dataCache[uniqueId] ?: dataCache2[name]?.let {
+            dataCache[it]
+        }
     }
 
 

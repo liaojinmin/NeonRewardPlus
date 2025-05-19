@@ -74,6 +74,11 @@ object RewardManager {
                                 }
                             }
                             data.time.autoUpdate()
+                            val rw = timeConfigCache.find { data.time.millis >= it.value.millis && !it.messagePost.contains(p.uniqueId) }
+                            if (rw != null) {
+                                rw.messagePost.add(p.uniqueId)
+                                p.sendLang("累计在线达标", rw.value.getExpiryFormat(), rw.id)
+                            }
                         }
                     }
                 }

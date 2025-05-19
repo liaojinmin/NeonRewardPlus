@@ -2,6 +2,7 @@ package me.neon.reward.api
 
 import me.neon.reward.SetTings.State.*
 import me.neon.reward.api.data.ExpIryBuilder
+import java.util.UUID
 
 /**
  * @作者: 老廖
@@ -16,24 +17,27 @@ data class RewardConfig<T>(
     val require: RewardRequire = RewardRequire()
 ) {
 
+    val messagePost: MutableList<UUID> = mutableListOf()
+
 
     fun parse(pID: MutableList<String>, pValue: T): String {
         if (pValue is Int && value is Int) {
             // pValue == Int
             // value ????
             if (pValue >= value) {
-                return if (pID.find {  it == id } != null) Received.dis else Available.dis
+                return if (pID.find { it == id } != null) Received.dis else Available.dis
             }
             return NotAvailable.dis
         }
         if (pValue is ExpIryBuilder && value is ExpIryBuilder) {
             if (pValue.millis >= value.millis) {
-                return if (pID.find {  it == id } != null) Received.dis else Available.dis
+                return if (pID.find { it == id } != null) Received.dis else Available.dis
             }
             return NotAvailable.dis
         }
         return "null"
     }
+
 
     fun parseValue(): String {
         return if (value is ExpIryBuilder) value.getExpiryFormat() else value.toString()

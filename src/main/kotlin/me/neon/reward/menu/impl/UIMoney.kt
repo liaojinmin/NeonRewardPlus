@@ -95,9 +95,11 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                         customModelData = icon.model
                         hideAll()
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        if (icon.action.isNotEmpty()) {
+                            KetherAPI.eval(this.clicker, icon.action)
+                        }
                         if (hasPreviousPage()) {
-                            page(page-1)
+                            page(page - 1)
                             openInventory(build())
                         }
                     }
@@ -109,9 +111,11 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                         customModelData = icon.model
                         hideAll()
                     }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
-                        if (hasPreviousPage()) {
-                            page(page+1)
+                        if (icon.action.isNotEmpty()) {
+                            KetherAPI.eval(this.clicker, icon.action)
+                        }
+                        if (hasNextPage()) {
+                            page(page + 1)
                             openInventory(build())
                         }
                     }
@@ -119,13 +123,13 @@ fun Player.openMoneyUI(data: PlayerData, menuData: MenuData = Menu.moneyMenuData
                 // 其它任意图标如果有动作则执行
                 else -> {
                     if (key != '@')
-                    set(key, buildItem(icon.mats) {
-                        name = icon.name.replacePlaceholder(this@openMoneyUI)
-                        lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
-                        customModelData = icon.model
-                    }) {
-                        if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
-                    }
+                        set(key, buildItem(icon.mats) {
+                            name = icon.name.replacePlaceholder(this@openMoneyUI)
+                            lore.addAll(icon.lore.replacePlaceholder(this@openMoneyUI))
+                            customModelData = icon.model
+                        }) {
+                            if (icon.action.isNotEmpty()) KetherAPI.eval(this.clicker, icon.action)
+                        }
                 }
             }
         }

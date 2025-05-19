@@ -81,6 +81,8 @@ time:
       display:
         mats: SPECTRAL_ARROW
         name: '下一页'
+      action:
+        - "tell 'dadadada'"
     '<':
       display:
         mats: SPECTRAL_ARROW
